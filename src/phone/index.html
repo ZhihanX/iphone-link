@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>iPhone Link</title>
+  <link rel="stylesheet" href="phone.css">
+</head>
+<body>
+  <header class="bar">
+    <label class="field">
+      <span data-i18n="phone.device"></span>
+      <select id="device"></select>
+    </label>
+    <button id="refresh" data-i18n="phone.refresh"></button>
+    <button id="connect" class="primary" data-i18n="phone.connect"></button>
+    <span class="spacer"></span>
+    <button id="openSettings" data-i18n="phone.settings"></button>
+  </header>
+
+  <main>
+    <section id="stage">
+      <canvas id="screen"></canvas>
+      <div id="placeholder"></div>
+      <!-- Takes the keyboard and the IME while the screen is clicked: what is
+           typed goes to the phone (phone.js, typing). -->
+      <textarea id="ime" autocomplete="off" autocapitalize="off" spellcheck="false" aria-hidden="true"></textarea>
+
+      <div id="setup" class="card" hidden>
+        <h2 data-i18n="phone.setup.title"></h2>
+        <p id="setupBody"></p>
+        <button id="setupButton" class="primary" data-i18n="phone.setup.button"></button>
+        <progress id="setupProgress" max="100" value="0" hidden></progress>
+      </div>
+    </section>
+
+    <aside id="side">
+      <div id="info" class="info"></div>
+
+      <fieldset class="group">
+        <legend data-i18n="phone.nav"></legend>
+        <button class="ctl" data-button="home" data-key="F1" data-i18n="phone.home"></button>
+        <button class="ctl" data-button="switcher" data-key="F2" data-i18n="phone.switcher"></button>
+        <button class="ctl" data-button="notifications" data-key="F3" data-i18n="phone.notifications"></button>
+        <button class="ctl" data-button="control" data-key="F4" data-i18n="phone.control"></button>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend data-i18n="phone.keys"></legend>
+        <div class="row">
+          <button class="ctl" data-button="volumeUp" data-i18n="phone.volumeUp"></button>
+          <button class="ctl" data-button="volumeDown" data-i18n="phone.volumeDown"></button>
+        </div>
+        <button class="ctl" data-button="lock" data-key="F5" data-i18n="phone.lock"></button>
+        <button class="ctl" id="screenshot" data-key="F6" data-i18n="phone.screenshot"></button>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend data-i18n="phone.text"></legend>
+        <input class="ctl" id="textInput" data-i18n-placeholder="phone.textPlaceholder">
+        <button class="ctl" id="clipType" data-i18n="phone.clipType"></button>
+        <button class="ctl" id="clipPush" data-i18n="phone.clipPush"></button>
+        <button class="ctl" id="clipPull" data-i18n="phone.clipPull"></button>
+      </fieldset>
+
+      <fieldset class="group">
+        <legend data-i18n="phone.more"></legend>
+        <button class="ctl" id="photos" data-i18n="phone.photos"></button>
+        <label class="field row">
+          <span data-i18n="phone.quality"></span>
+          <select class="ctl" id="quality">
+            <option value="smooth" data-i18n="phone.quality.smooth"></option>
+            <option value="standard" data-i18n="phone.quality.standard"></option>
+            <option value="hd" data-i18n="phone.quality.hd"></option>
+          </select>
+        </label>
+        <button id="toggleLog" data-i18n="phone.log"></button>
+      </fieldset>
+
+      <p class="tips" data-i18n="phone.tips"></p>
+    </aside>
+  </main>
+
+  <pre id="log" hidden></pre>
+  <footer id="status"></footer>
+
+  <dialog id="settings">
+    <form method="dialog">
+      <label class="stack">
+        <span data-i18n="phone.settings.bundle"></span>
+        <input id="bundle" data-i18n-placeholder="phone.settings.bundleHint">
+      </label>
+      <label class="stack">
+        <span data-i18n="phone.settings.direct"></span>
+        <input id="direct" data-i18n-placeholder="phone.settings.directHint">
+      </label>
+      <menu>
+        <button value="cancel" data-i18n="phone.settings.cancel"></button>
+        <button value="save" class="primary" data-i18n="phone.settings.save"></button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="../shared/i18n.js"></script>
+  <script src="gesture.js"></script>
+  <script src="phone.js"></script>
+</body>
+</html>

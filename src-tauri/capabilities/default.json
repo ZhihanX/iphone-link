@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The phone window: its commands and events from the Rust side",
+  "windows": ["phone"],
+  "permissions": ["core:default"]
+}

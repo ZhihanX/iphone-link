@@ -1,0 +1,38 @@
+[package]
+name = "iphone-link"
+version = "0.2.0"
+edition = "2021"
+license = "MIT"
+description = "Mirror and control an iPhone from Windows"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+# Every dependency below is one Wakuwaku already has, at the same version, so
+# that phone.rs and phone/ move into its src-tauri/src unchanged and bring
+# nothing new to its tree (docs/DEVELOPMENT.md, "合进 Wakuwaku").
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# WebDriverAgent's HTTP (phone/wda.rs), its MJPEG stream (phone/mjpeg.rs) and
+# go-ios's release from GitHub (phone/goios_setup.rs).
+ureq = { version = "3.4.2", features = ["json"] }
+base64 = "0.22"
+# The SHA-256 of go-ios's zip, checked against the digest GitHub gives for it.
+sha2 = "0.10"
+# go-ios's zip unpacked (phone/zip.rs): inflated and its CRC checked.
+flate2 = "1"
+crc32fast = "1"
+
+[features]
+default = ["custom-protocol"]
+# Serve the pages from the binary; without it Tauri waits for a dev server.
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

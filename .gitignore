@@ -1,6 +1,8 @@
-__pycache__/
-*.pyc
-.venv/
-build/
-dist/
-*.spec
+# Rust / Tauri
+src-tauri/target/
+src-tauri/gen/
+# Data from runs (iphone-link-data beside the exe, IPHONE_LINK_DATA)
+iphone-link-data/
+data/
+node_modules/
+out/
