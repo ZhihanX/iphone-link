@@ -105,11 +105,13 @@ pub fn parse_list(out: &str) -> Vec<Device> {
         .unwrap_or_default()
 }
 
-// WebDriverAgent's runner among the apps (`ios apps --list`): signed with a
-// free Apple ID its bundle id is often changed (Sideloadly adds to it), so
-// any with WebDriverAgentRunner in it; the one ending in .xctrunner first.
+// WebDriverAgent's runner among the apps (`ios apps --list`, a line each:
+// "bundleid name version"): signed with a free Apple ID its bundle id is
+// changed (Sideloadly makes it the team's own), so found by its name too
+// ("WebDriverAgentRunner-Runner"); its bundle id taken, the one ending in
+// .xctrunner first.
 pub fn find_wda(apps: &str) -> Option<String> {
-    let mut found: Vec<&str> = apps.lines().filter_map(|l| l.split_whitespace().next()).filter(|id| id.to_lowercase().contains("webdriveragentrunner")).collect();
+    let mut found: Vec<&str> = apps.lines().filter(|l| l.to_lowercase().contains("webdriveragent")).filter_map(|l| l.split_whitespace().next()).collect();
     found.sort_by_key(|id| (!id.ends_with(".xctrunner"), *id));
     found.first().map(|s| s.to_string())
 }
@@ -173,8 +175,9 @@ impl GoIos {
         Ok(list)
     }
 
-    pub fn wda_bundle(&self, udid: &str) -> Result<Option<String>, String> {
-        Ok(find_wda(&self.run(&Self::args(&["apps", "--list"], Some(udid)), Duration::from_secs(30))?))
+    // The apps the person installed, as `ios apps --list` gives them.
+    pub fn user_apps(&self, udid: &str) -> Result<String, String> {
+        self.run(&Self::args(&["apps", "--list"], Some(udid)), Duration::from_secs(30))
     }
 
     pub fn agent_running() -> bool {
@@ -381,6 +384,9 @@ mod tests {
     fn wda_is_found_whatever_sideloadly_called_it() {
         let apps = "com.apple.mobilesafari Safari 17.0\ncom.foo.WebDriverAgentRunner Runner 1.0\ncom.foo.WebDriverAgentRunner.xctrunner WebDriverAgentRunner-Runner 1.0\n";
         assert_eq!(find_wda(apps).as_deref(), Some("com.foo.WebDriverAgentRunner.xctrunner"));
+        // Its bundle id made the team's own: found by its name.
+        let renamed = "com.tencent.xin WeChat 8.0\ncom.ABCDE12345.runner WebDriverAgentRunner-Runner 1.0\n";
+        assert_eq!(find_wda(renamed).as_deref(), Some("com.ABCDE12345.runner"));
         assert_eq!(find_wda("com.apple.mobilesafari Safari 17.0\n"), None);
     }
 
@@ -426,7 +432,7 @@ esac
         assert_eq!(list.len(), 1);
         assert_eq!(list[0].name, "Zhihan的iPhone");
         assert_eq!(list[0].ios_major(), 17);
-        assert_eq!(g.wda_bundle("U1").unwrap().as_deref(), Some("com.zh.WebDriverAgentRunner.xctrunner"));
+        assert_eq!(find_wda(&g.user_apps("U1").unwrap()).as_deref(), Some("com.zh.WebDriverAgentRunner.xctrunner"));
         assert_eq!(g.mount("U1").unwrap_err(), "failed mounting image: device locked");
     }
 

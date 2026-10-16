@@ -177,7 +177,18 @@ fn connect_usb(sh: &Shared, g: &GoIos, device: &Device, bundle: Option<String>) 
     step(sh, "findWda");
     let bundle = match bundle.filter(|b| !b.trim().is_empty()) {
         Some(b) => b.trim().to_string(),
-        None => g.wda_bundle(&device.udid).map_err(|e| err("apps", e))?.ok_or_else(|| err("noWda", ""))?,
+        None => {
+            let apps = g.user_apps(&device.udid).map_err(|e| err("apps", e))?;
+            match goios::find_wda(&apps) {
+                Some(b) => b,
+                None => {
+                    // What is there instead, for whoever reads the log: a
+                    // runner under a name we do not know is in it.
+                    log(sh, &format!("no WebDriverAgentRunner among the phone's apps:\n{}", apps.trim()));
+                    return Err(err("noWda", ""));
+                }
+            }
+        }
     };
     log(sh, &format!("WDA: {bundle}"));
 
