@@ -37,7 +37,9 @@
 ### 1. 电脑端
 
 1. Windows 10 / 11（需要 WebView2，Windows 11 自带，Windows 10 一般已经装好）。
-2. 安装苹果的 USB 驱动：从 Microsoft Store 安装 **Apple Devices**，或者安装 **iTunes**（二选一）。
+2. 安装**桌面版 iTunes**（[64 位下载](https://www.apple.com/itunes/download/win64)），它会装上一个常驻的 Apple Mobile Device Service，iPhone Link 通过它找到手机。
+   - **不要用 Microsoft Store 里的 iTunes 或 Apple Devices**：实测商店版 iTunes 能装上，但不提供这个服务，iPhone Link 找不到手机。已经装了商店版的，先卸载再装桌面版。
+   - 装好后可以在 PowerShell 里检查：`Get-Service "Apple Mobile Device Service"` 显示 `Running` 就对了。
 3. 从 [Releases](https://github.com/ZhihanX/iphone-link/releases) 下载 **`iPhoneLink.exe`**，放在一个单独的文件夹里（它会在旁边建一个 `iphone-link-data` 文件夹存放数据）。
 
 ### 2. 在 iPhone 上安装 WebDriverAgent
@@ -59,7 +61,7 @@
 ## 常见问题
 
 **找不到设备 / 提示找不到 USB 服务**
-确认已安装 Apple Devices 或 iTunes，换一根能传数据的线，手机解锁并点了“信任”，然后点 **刷新**。
+确认装的是**桌面版** iTunes（不是 Microsoft Store 版），`Get-Service "Apple Mobile Device Service"` 显示 `Running`；换一根能传数据的线，手机解锁并点了“信任”，然后点 **刷新**。
 
 **下载 go-ios 失败**
 程序需要访问 GitHub。连不上时可以手动下载 [go-ios v1.3.2 的 go-ios-win.zip](https://github.com/danielpaulus/go-ios/releases/tag/v1.3.2)，把里面的 `ios.exe` 放到 `iphone-link-data\goios\v1.3.2\` 里。
